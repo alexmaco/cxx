@@ -41,9 +41,15 @@ bool cxxbridge1$string$from(rust::String *self, const char *ptr,
 void cxxbridge1$string$drop(rust::String *self) noexcept;
 const char *cxxbridge1$string$ptr(const rust::String *self) noexcept;
 size_t cxxbridge1$string$len(const rust::String *self) noexcept;
+bool cxxbridge1$string$eq(const rust::String &self,
+                          const rust::String &other) noexcept;
 
 // rust::Str
 bool cxxbridge1$str$valid(const char *ptr, size_t len) noexcept;
+bool cxxbridge1$str$eq(const char *self_ptr, size_t self_len,
+                       const char *other_ptr, size_t other_len) noexcept;
+bool cxxbridge1$str$eq_string(const char *a_ptr, size_t a_len,
+                              const rust::String b) noexcept;
 } // extern "C"
 
 namespace rust {
@@ -115,6 +121,17 @@ String::operator std::string() const {
   return std::string(this->data(), this->size());
 }
 
+bool String::operator==(const String &other) const noexcept {
+  if (this == &other) {
+    return true;
+  }
+  return cxxbridge1$string$eq(*this, other);
+}
+
+bool String::operator!=(const String &other) const noexcept {
+  return !(this->String::operator==(other));
+}
+
 const char *String::data() const noexcept {
   return cxxbridge1$string$ptr(this);
 }
@@ -157,6 +174,21 @@ Str::Str(const char *s, size_t len)
 
 Str::operator std::string() const {
   return std::string(this->data(), this->size());
+}
+
+bool Str::operator==(const Str &other) const noexcept {
+  if (this == &other) {
+    return true;
+  }
+  return cxxbridge1$str$eq(this->ptr, this->len, other.ptr, other.len);
+}
+
+bool Str::operator!=(const Str &other) const noexcept {
+  return !(this->Str::operator==(other));
+}
+
+bool operator==(const Str &a, const String &b) noexcept {
+  return cxxbridge1$str$eq_string(a.data(), a.size(), b);
 }
 
 std::ostream &operator<<(std::ostream &os, const Str &s) {

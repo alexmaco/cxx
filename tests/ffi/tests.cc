@@ -635,6 +635,25 @@ extern "C" const char *cxx_run_test() noexcept {
 
   ASSERT(std::string(rAliasedFunction(2020)) == "2020");
 
+  const auto string_a = rust::String("2020");
+  const auto string_b = rust::String("2050");
+  const auto string_c = rust::String("2050");
+  ASSERT(string_a == string_a);
+  ASSERT(string_a != string_b);
+  ASSERT(string_b == string_c);
+
+  const auto str_a = rust::Str("2020");
+  const auto str_b = rust::Str("2050");
+  const auto str_c = rust::Str("2050");
+  ASSERT(str_a == str_a);
+  ASSERT(str_a != str_b);
+  ASSERT(str_b == str_c);
+
+  ASSERT(str_a == string_a);
+  ASSERT(str_a != string_b);
+  ASSERT(string_a == str_a);
+  ASSERT(string_a != str_b);
+
   cxx_test_suite_set_correct();
   return nullptr;
 }

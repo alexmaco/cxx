@@ -41,6 +41,8 @@ public:
   String &operator=(String &&) noexcept;
 
   explicit operator std::string() const;
+  bool operator==(const String &) const noexcept;
+  bool operator!=(const String &) const noexcept;
 
   // Note: no null terminator.
   const char *data() const noexcept;
@@ -66,6 +68,8 @@ public:
   Str(std::string &&) = delete;
 
   Str &operator=(const Str &) noexcept = default;
+  bool operator==(const Str &) const noexcept;
+  bool operator!=(const Str &) const noexcept;
 
   explicit operator std::string() const;
 
@@ -86,6 +90,17 @@ private:
   size_t len;
 };
 #endif // CXXBRIDGE1_RUST_STR
+
+bool operator==(const Str &, const String &) noexcept;
+inline bool operator!=(const Str &a, const String &b) noexcept {
+  return !(a == b);
+}
+inline bool operator==(const String &a, const Str &b) noexcept {
+  return b == a;
+}
+inline bool operator!=(const String &a, const Str &b) noexcept {
+  return b != a;
+}
 
 #ifndef CXXBRIDGE1_RUST_SLICE
 template <typename T>

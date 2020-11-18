@@ -45,3 +45,8 @@ unsafe extern "C" fn string_ptr(this: &String) -> *const u8 {
 unsafe extern "C" fn string_len(this: &String) -> usize {
     this.len()
 }
+
+#[export_name = "cxxbridge1$string$eq"]
+unsafe extern "C" fn string_eq(this: &String, other: &String) -> bool {
+    PartialEq::eq(this, other)
+}
